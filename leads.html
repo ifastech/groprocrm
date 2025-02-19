@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads Management - Real Estate CRM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Include Navigation -->
+    <div id="navigation-placeholder"></div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Include Sidebar -->
+            <div id="sidebar-placeholder"></div>
+
+            <!-- Main Content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Leads Management</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary view-toggle-btn active" data-view="table">
+                                <i class="fas fa-table"></i> Table View
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-primary view-toggle-btn" data-view="card">
+                                <i class="fas fa-th-large"></i> Card View
+                            </button>
+                        </div>
+                        <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#addLeadModal">
+                            <i class="fas fa-plus"></i> Add Lead
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <div class="card bg-primary text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Total Leads</h5>
+                                <h2 id="totalLeadsCount">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-info text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">New Leads</h5>
+                                <h2 id="newLeadsCount">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-success text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Active Leads</h5>
+                                <h2 id="activeLeadsCount">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card bg-warning text-white">
+                            <div class="card-body">
+                                <h5 class="card-title">Converted</h5>
+                                <h2 id="convertedLeadsCount">0</h2>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="row mb-4">
+                    <div class="col-md-3">
+                        <input type="text" id="leadSearch" class="form-control" placeholder="Search leads...">
+                    </div>
+                    <div class="col-md-3">
+                        <select id="statusFilter" class="form-select">
+                            <option value="">All Statuses</option>
+                            <option value="new">New</option>
+                            <option value="active">Active</option>
+                            <option value="follow-up">Follow-up</option>
+                            <option value="converted">Converted</option>
+                            <option value="lost">Lost</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select id="agentFilter" class="form-select">
+                            <option value="">All Agents</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Leads Container -->
+                <div id="leadsContainer"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Add Lead Modal -->
+    <div class="modal fade" id="addLeadModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Lead</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addLeadForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" name="phone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Budget</label>
+                                <input type="number" class="form-control" name="budget" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Property</label>
+                                <select class="form-select" name="propertyId" required>
+                                    <option value="">Select Property</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Assign To</label>
+                                <select class="form-select" name="assignedTo">
+                                    <option value="">Select Agent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Source</label>
+                                <select class="form-select" name="source" required>
+                                    <option value="website">Website</option>
+                                    <option value="referral">Referral</option>
+                                    <option value="social">Social Media</option>
+                                    <option value="direct">Direct</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" required>
+                                    <option value="new">New</option>
+                                    <option value="active">Active</option>
+                                    <option value="follow-up">Follow-up</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Requirements</label>
+                            <textarea class="form-control" name="requirements" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Lead</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Lead Modal -->
+    <div class="modal fade" id="editLeadModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Lead</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editLeadForm">
+                        <input type="hidden" name="leadId">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Name</label>
+                                <input type="text" class="form-control" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" name="email" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Phone</label>
+                                <input type="tel" class="form-control" name="phone" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Budget</label>
+                                <input type="number" class="form-control" name="budget" required>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Property</label>
+                                <select class="form-select" name="propertyId" required>
+                                    <option value="">Select Property</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Assign To</label>
+                                <select class="form-select" name="assignedTo">
+                                    <option value="">Select Agent</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">Source</label>
+                                <select class="form-select" name="source" required>
+                                    <option value="website">Website</option>
+                                    <option value="referral">Referral</option>
+                                    <option value="social">Social Media</option>
+                                    <option value="direct">Direct</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">Status</label>
+                                <select class="form-select" name="status" required>
+                                    <option value="new">New</option>
+                                    <option value="active">Active</option>
+                                    <option value="follow-up">Follow-up</option>
+                                    <option value="converted">Converted</option>
+                                    <option value="lost">Lost</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Requirements</label>
+                            <textarea class="form-control" name="requirements" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Lead</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lead Details Modal -->
+    <div class="modal fade" id="leadDetailsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Lead Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="leadDetailsContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Lead Modal -->
+    <div class="modal fade" id="deleteLeadModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Lead</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this lead? This action cannot be undone.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Site Visit Modal -->
+    <div class="modal fade" id="siteVisitModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Schedule Site Visit</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="siteVisitForm">
+                        <div class="mb-3">
+                            <label class="form-label">Property</label>
+                            <select class="form-select" name="propertyId" required>
+                                <option value="">Select Property</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date & Time</label>
+                            <input type="datetime-local" class="form-control" name="scheduledDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Schedule</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Followup Modal -->
+    <div class="modal fade" id="followupModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add Followup</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="followupForm">
+                        <div class="mb-3">
+                            <label class="form-label">Type</label>
+                            <select class="form-select" name="type" required>
+                                <option value="call">Call</option>
+                                <option value="email">Email</option>
+                                <option value="meeting">Meeting</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Date & Time</label>
+                            <input type="datetime-local" class="form-control" name="scheduledDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            <textarea class="form-control" name="notes" rows="3"></textarea>
+                        </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Add Followup</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/leads.js"></script>
+    <script>
+        // Load navigation and sidebar
+        fetch('navigation.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('navigation-placeholder').innerHTML = data;
+            });
+
+        fetch('sidebar.html')
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById('sidebar-placeholder').innerHTML = data;
+            });
+    </script>
+</body>
+</html>
